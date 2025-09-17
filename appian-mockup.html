@@ -4,18 +4,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appian Mockup - Navigation V2</title>
+    <title>Appian Create Data Model Mockup</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #ffffff;
-            /* A light gray background for the whole page */
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
 
-        /* Custom styles for better visual fidelity */
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Document Configuration Modal - Higher z-index */
+        #documentConfigModal {
+            z-index: 1000 !important;
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        #documentConfigModal.active {
+            display: flex !important;
+        }
+
+        #documentConfigModal .modal-content {
+            z-index: 1001 !important;
+            position: relative !important;
+            margin: auto !important;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            border-radius: 8px;
+            width: 95%;
+            max-width: 1400px;
+            height: 90vh;
+            max-height: 900px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
         .sidebar-item {
             transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
             cursor: pointer;
@@ -23,123 +74,102 @@
 
         .sidebar-item:hover {
             background-color: #eef2ff;
-            /* A light indigo on hover */
         }
 
         .sidebar-item.active {
-            background-color: #4f46e5;
-            /* Indigo-600 */
+            background-color: #3b4f9a;
             color: white;
-            border-right: 4px solid #818cf8;
-            /* A lighter indigo for the active border */
         }
 
-        .sidebar-heading {
-            color: #64748b;
-            /* Slate-500 */
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
+        .field-row {
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .card-option {
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        .field-row:hover {
+            background-color: #f9fafb;
+        }
+
+        .field-type-select {
+            min-width: 140px;
+        }
+
+        .action-icon {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .action-icon:hover {
+            color: #3b82f6;
+        }
+
+        .delete-icon:hover {
+            color: #ef4444;
+        }
+
+        .commonly-used-field {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .commonly-used-field:hover {
+            background-color: #f3f4f6;
+        }
+
+        .choice-list-field {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .choice-list-field:hover {
+            background-color: #f3f4f6;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-option:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        }
-
-        .page-content,
-        .config-tab-panel {
-            display: none;
-        }
-
-        .page-content.active,
-        .config-tab-panel.active {
-            display: flex;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            /* Hidden by default */
-            position: fixed;
-            /* Stay in place */
-            z-index: 50;
-            /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0);
-            /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4);
-            /* Black w/ opacity */
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .modal.active {
-            display: flex;
-        }
-
-        /* Toggle Switch */
-        .toggle-bg:after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            background-color: white;
-            width: 1.25rem;
-            height: 1.25rem;
-            border-radius: 9999px;
-            transition: transform 0.2s ease-in-out;
-        }
-
-        input:checked+.toggle-bg:after {
-            transform: translateX(100%);
-            border-color: white;
-        }
-
-        input:checked+.toggle-bg {
-            background-color: #4f46e5;
-            /* indigo-600 */
-        }
-
-        /* Tab styles */
-        .config-tab.active {
-            border-color: #4f46e5;
-            color: #4f46e5;
+        .close-button:hover {
+            background-color: #f3f4f6;
+            border-color: #9ca3af;
         }
     </style>
 </head>
 
 <body class="bg-gray-50">
-    <div id="app" class="flex flex-col h-screen w-full">
-        <!-- Header -->
+    <!-- Background page with RPUI Orders header -->
+    <div class="h-screen w-full bg-white flex flex-col">
+        <!-- Site Header -->
         <header class="bg-white border-b border-gray-200 flex-shrink-0">
             <div class="h-2 w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500"></div>
             <div class="flex items-center justify-between h-14 px-6">
-                <!-- Left side: Title -->
+                <!-- Left side: Title with breadcrumb -->
                 <div class="flex items-center space-x-2">
-                    <h1 class="text-xl font-semibold text-gray-800">AA Order</h1>
+                    <i class="fas fa-database text-blue-600"></i>
+                    <span class="text-sm text-gray-500">RPUI Orders</span>
+                    <i class="fas fa-external-link-alt text-xs text-gray-400"></i>
                 </div>
                 <!-- Right side: Actions & User -->
                 <div class="flex items-center space-x-4">
-                    <button
-                        class="px-4 py-1.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700">SAVE</button>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <div
-                            class="h-8 w-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-sm cursor-pointer">
-                            AU</div>
+                    <button class="text-sm text-blue-600 hover:text-blue-700">SAVE CHANGES</button>
+                    <i class="fas fa-search text-gray-400"></i>
+                    <i class="fas fa-cog text-gray-400"></i>
+                    <i class="fas fa-th text-gray-400"></i>
+                    <div
+                        class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold text-sm">
+                        JR
                     </div>
                     <div class="font-bold text-2xl text-blue-700 tracking-wider">
                         appian
@@ -148,1006 +178,756 @@
             </div>
         </header>
 
-        <!-- Container for Sidebar and Main Content -->
+        <!-- Main content area with sidebar -->
         <div class="flex flex-1 overflow-hidden">
-            <!-- Sidebar -->
-            <aside class="w-64 border-r border-gray-200 flex-col overflow-y-auto" style="background-color: #f0f0f0;">
+            <!-- Left Sidebar -->
+            <aside class="w-64 bg-gray-100 border-r border-gray-200 flex-col overflow-y-auto">
                 <!-- Navigation Links -->
                 <nav class="flex-grow pt-4">
                     <div class="px-4 mb-4">
-                        <h3 class="sidebar-heading">DATA</h3>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">DATA</h3>
                     </div>
                     <ul>
                         <li>
                             <div id="data-model-nav"
-                                class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">Data
-                                Model</div>
-                        </li>
-                        <li>
-                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">Data
-                                Preview</div>
-                        </li>
-                        <li>
-                            <div id="events-nav"
-                                class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Events</div>
-                        </li>
-                        <li>
-                            <div id="documents-nav"
-                                class="flex items-center px-4 py-2 text-sm font-medium sidebar-item active">
-                                Documents</div>
-                        </li>
-                        <li>
-                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">Sync
-                                Options</div>
-                        </li>
-                    </ul>
-
-                    <div class="px-4 mt-6 mb-4">
-                        <h3 class="sidebar-heading">USER EXPERIENCE</h3>
-                    </div>
-                    <ul>
-                        <li>
-                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">List
+                                class="flex items-center px-4 py-2 text-sm text-white font-medium sidebar-item active bg-blue-600 mx-2 rounded">
+                                Data Model
                             </div>
                         </li>
                         <li>
                             <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Filters</div>
+                                Data Preview
+                            </div>
                         </li>
                         <li>
                             <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Views</div>
+                                Events
+                            </div>
                         </li>
                         <li>
                             <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Actions</div>
+                                Documents
+                            </div>
                         </li>
                         <li>
                             <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Workspaces</div>
+                                Sync Options
+                            </div>
                         </li>
                     </ul>
 
                     <div class="px-4 mt-6 mb-4">
-                        <h3 class="sidebar-heading">SECURITY</h3>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">USER EXPERIENCE</h3>
                     </div>
                     <ul>
                         <li>
-                            <div
-                                class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Record-Level Security</div>
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
+                                List
+                            </div>
                         </li>
                         <li>
                             <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Field-Level Security</div>
+                                Filters
+                            </div>
                         </li>
                         <li>
                             <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Views and Actions Security</div>
+                                Views
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
+                                Actions
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
+                                Workspaces
+                            </div>
                         </li>
                     </ul>
 
                     <div class="px-4 mt-6 mb-4">
-                        <h3 class="sidebar-heading">MONITORING</h3>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">SECURITY</h3>
                     </div>
                     <ul>
                         <li>
                             <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
-                                Performance</div>
+                                Record-Level Security
+                            </div>
                         </li>
                         <li>
-                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">Sync
-                                History</div>
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
+                                Field-Level Security
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
+                                Views and Actions Security
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="px-4 mt-6 mb-4">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">MONITORING</h3>
+                    </div>
+                    <ul>
+                        <li>
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
+                                Performance
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 font-medium sidebar-item">
+                                Sync History
+                            </div>
                         </li>
                     </ul>
                 </nav>
             </aside>
 
             <!-- Main Content -->
-            <main class="flex-1 overflow-y-auto p-8" style="background-color: #ffffff;">
-                <!-- Data Model Page Content -->
-                <div id="data-model-page" class="page-content w-full h-full">
-                    <!-- This is the blank page for Data Model -->
-                </div>
-                <!-- Events Page Content -->
-                <div id="events-page" class="page-content w-full h-full">
-                    <!-- This is the blank page for Events -->
-                </div>
-                <!-- Documents Page Content -->
-                <div id="documents-page" class="page-content active w-full flex-col h-full">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-4">Documents</h1>
-
-                        <!-- Document Stats -->
-                        <div class="mb-4">
-                            <div class="flex items-center space-x-6 text-sm text-gray-600 mb-2">
-                                <span>Total Documents: <strong>442MB</strong></span>
-                                <span class="flex items-center"><span
-                                        class="w-3 h-3 bg-green-500 rounded-full mr-1"></span>
-                                    Referenced:
-                                    <strong>300MB</strong></span>
-                                <span class="flex items-center"><span
-                                        class="w-3 h-3 bg-blue-500 rounded-full mr-1"></span>
-                                    Orphaned:
-                                    <strong>142MB</strong></span>
-                            </div>
-                            <div class="w-1/2 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-l-full" style="width: 68%"></div>
-                                <div class="bg-blue-500 h-2 rounded-r-full"
-                                    style="width: 32%; margin-top: -8px; margin-left: 68%"></div>
-                            </div>
-                        </div>
-
-                        <!-- Tabs -->
-                        <div class="border-b border-gray-200 mb-6">
-                            <nav class="-mb-px flex space-x-8">
-                                <button
-                                    class="border-b-2 border-indigo-500 text-indigo-600 py-2 px-1 text-sm font-medium">Folders</button>
-                                <button
-                                    class="border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 text-sm font-medium">Configuration</button>
-                            </nav>
-                        </div>
-
-                        <!-- Search, Filters and Action Buttons -->
-                        <div class="flex items-center justify-between mb-5">
-                            <!-- Left side: Search and Filters -->
-                            <div class="flex items-center space-x-4">
-                                <div class="relative">
-                                    <input type="text" placeholder="Search applications"
-                                        class="pl-8 pr-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <i class="fas fa-search absolute left-2.5 top-2.5 text-gray-400 text-sm"></i>
-                                </div>
-
-                            </div>
-                            <!-- View Toggle Icons -->
-                            <div class="flex justify-end mb-2">
-                                <div class="flex items-center space-x-1">
-                                    <button
-                                        class="p-2 text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors"
-                                        title="List View">
-                                        <i class="fas fa-list text-sm"></i>
-                                    </button>
-                                    <button
-                                        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
-                                        title="Grid View">
-                                        <i class="fas fa-th text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Left side: Filter -->
-                        <div id="filter-section" class="flex items-center justify-between mb-4 hidden">
-                            <select
-                                class="px-4 py-2 border border-gray-300 rounded-sm text-sm text-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                <option disabled selected>RECORD NAME</option>
-                                <option>Acme Corp</option>
-                                <option>Beta Industries</option>
-                                <option>Gamma Solutions</option>
-                            </select>
-                            <!-- Right side: Action Buttons -->
-                            <div class="flex items-end space-x-2 mb-4">
-                                <button
-                                    class="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 bg-transparent border border-gray-300 rounded-sm hover:bg-gray-100 transition-colors">
-                                    <i class="fas fa-trash text-xs"></i>
-                                    <span>DELETE</span>
-                                </button>
-                                <button
-                                    class="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 bg-transparent border border-gray-300 rounded-sm hover:bg-gray-100 transition-colors">
-                                    <i class="fas fa-download text-xs"></i>
-                                    <span>DOWNLOAD</span>
-                                </button>
-                                <button
-                                    class="flex items-center space-x-1 px-3 py-2 text-sm text-indigo-600 bg-transparent border border-indigo-600 rounded-sm hover:bg-indigo-600 hover:text-white transition-colors">
-                                    <i class="fas fa-broom text-xs"></i>
-                                    <span>CLEAN UP DOCUMENTS</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Documents Table -->
-                        <div id="list-view" class="bg-white rounded-sm border border-gray-200 overflow-hidden">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <input type="checkbox" class="rounded border-gray-300">
-                                        </th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Record Name</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Number of Documents</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Last Updated On</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" class="rounded border-gray-300">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-folder text-gray-400 mr-2"></i>
-                                                <span>Acme Corp</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            2/13/2025 10:43 PM<br>
-                                            <span class="text-xs text-gray-400">by Kaushik R</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" class="rounded border-gray-300">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-folder text-gray-400 mr-2"></i>
-                                                <span>Beta Industries</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            2/13/2025 10:44 PM<br>
-                                            <span class="text-xs text-gray-400">by Kaushik R</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" class="rounded border-gray-300">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-folder text-gray-400 mr-2"></i>
-                                                <span>Gamma Solutions</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">23</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            2/18/2025 9:56 AM<br>
-                                            <span class="text-xs text-gray-400">by Brandon Small</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" class="rounded border-gray-300">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-folder text-gray-400 mr-2"></i>
-                                                <span>Delta Enterprises</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            2/20/2025 2:15 PM<br>
-                                            <span class="text-xs text-gray-400">by Sarah Johnson</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" class="rounded border-gray-300">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-folder text-gray-400 mr-2"></i>
-                                                <span>Epsilon Technologies</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">7</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            2/22/2025 11:30 AM<br>
-                                            <span class="text-xs text-gray-400">by Michael Chen</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <main class="flex-1 bg-white p-8 flex items-center justify-center">
+                <div class="text-center">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">Data Model</h1>
+                    <p class="text-gray-600 mb-8 max-w-md">Configure your data model structure and field definitions for
+                        the RPUI Orders record type.</p>
+                    <div class="space-y-4">
+                        <button id="openModalBtn"
+                            class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                            Create Data Model
+                        </button>
+                        <div class="text-sm text-gray-500">
+                            <p>Define fields, relationships, and data types</p>
                         </div>
                     </div>
                 </div>
+            </main>
         </div>
-    </div>
-
-
-
-    </div>
-    </div>
-
-
-    </div>
-
-
-    </div>
-    <!-- Configurations Page Content V2 -->
-    <div id="configurations-page" class="page-content w-full flex-col items-start h-full text-left">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">Documents</h1>
-        <div class="bg-white rounded-lg border border-gray-200 w-full">
-            <div class="border-b border-gray-200 w-full">
-                <nav class="-mb-px flex space-x-8 px-8" aria-label="Tabs">
-                    <button id="list-tab"
-                        class="config-tab active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">List</button>
-                    <button id="config-tab"
-                        class="config-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Configurations</button>
-                </nav>
-            </div>
-
-            <!-- List Tab Panel -->
-            <div id="list-tab-content" class="config-tab-panel active w-full flex-col p-8">
-                <div class="w-full">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xl font-bold text-gray-800">External System Configurations</h3>
-                        <div class="flex items-center space-x-4">
-                            <button id="edit-config-btn"
-                                class="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-600 bg-transparent border border-gray-300 rounded-sm hover:bg-gray-100 transition-colors">
-                                <i class="fas fa-pencil-alt"></i>
-                                <span>Edit</span>
-                            </button>
-                            <button id="test-config-btn"
-                                class="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-indigo-600 bg-transparent border border-indigo-600 rounded-sm hover:bg-indigo-600 hover:text-white transition-colors">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Test</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-x-8 gap-y-4 mt-6 max-w-md">
-                        <span class="font-medium text-gray-600 text-right">Connected System:</span>
-                        <span id="config-system" class="text-gray-800 font-semibold"></span>
-
-                        <span class="font-medium text-gray-600 text-right">Upload Integration:</span>
-                        <span id="config-upload" class="text-gray-800 font-semibold"></span>
-
-                        <span class="font-medium text-gray-600 text-right">Download Integration:</span>
-                        <span id="config-download" class="text-gray-800 font-semibold"></span>
-                    </div>
-                </div>
-                <hr class="my-8 border-gray-200 w-full">
-            </div>
-            <!-- Configurations Tab Panel -->
-            <div id="config-tab-content" class="config-tab-panel w-full p-8">
-                <div class="max-w-lg">
-                    <h3 class="text-xl font-bold text-gray-800 mb-6">Automated Cleanup</h3>
-                    <div class="flex justify-between items-center">
-                        <span class="font-medium text-gray-600">Enable automated cleanup</span>
-                        <label for="toggle" class="flex items-center cursor-pointer">
-                            <div class="relative">
-                                <input type="checkbox" id="toggle" class="sr-only">
-                                <div class="block bg-gray-300 w-12 h-7 rounded-full toggle-bg"></div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </main>
-    </div>
     </div>
 
     <!-- Modal -->
-    <div id="external-system-modal" class="modal">
-        <!-- Modal content -->
-        <div class="relative mx-auto p-8 border w-full max-w-lg shadow-lg rounded-sm bg-white">
-            <button id="modal-close-icon" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <i class="fas fa-times fa-lg"></i>
+    <div id="createDataModelModal" class="modal">
+        <div class="modal-content flex flex-col">
+            <!-- Close Button -->
+            <button id="closeModalBtn" class="close-button">
+                <i class="fas fa-times text-gray-500"></i>
             </button>
-            <h3 class="text-2xl leading-6 font-bold text-gray-900 mb-6 text-center">Connect to External System</h3>
-            <form class="space-y-6">
-                <!-- Custom Picker for Connected System -->
-                <div>
-                    <label for="connected-system-select"
-                        class="text-sm font-medium text-gray-700 block text-left mb-1">Select a Connected System</label>
-                    <div class="flex items-center space-x-2">
-                        <div class="relative flex-grow">
-                            <div
-                                class="w-full pl-3 pr-10 py-2 text-left bg-white border border-gray-300 rounded-sm shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                <span id="connected-system-text" class="block truncate">SharePoint</span>
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400 h-5 w-5"></i>
-                                </span>
-                            </div>
-                            <select id="connected-system-select" name="connected-system"
-                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                <option>SharePoint</option>
-                                <option>Google Drive</option>
-                                <option>Box</option>
-                            </select>
-                        </div>
-                        <button type="button" class="p-2 text-indigo-600 hover:text-indigo-800">
-                            <i class="fas fa-plus fa-lg"></i>
+
+            <!-- Modal Header (simplified) -->
+            <header class="bg-white border-b border-gray-200 flex-shrink-0">
+                <div class="flex items-center justify-between h-14 px-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Create Data Model</h2>
+                </div>
+            </header>
+
+            <!-- Container for Sidebar and Main Content -->
+            <div class="flex flex-1 overflow-hidden">
+                <!-- Sidebar -->
+                <aside class="w-64 bg-blue-900 border-r border-blue-800 flex-col overflow-y-auto">
+                    <!-- Help Section -->
+                    <div class="bg-blue-800 text-white p-4 m-4 rounded">
+                        <h3 class="font-semibold text-sm mb-2">What fields do you need?</h3>
+                        <p class="text-xs leading-relaxed mb-3">
+                            Create fields to store the data about your record. Find the field type or set up common
+                            field for your business.
+                        </p>
+                        <button class="text-xs text-blue-200 hover:text-white">
+                            More...
                         </button>
                     </div>
-                </div>
-                <!-- Custom Picker for Upload Integration -->
-                <div>
-                    <label for="upload-integration-select"
-                        class="text-sm font-medium text-gray-700 block text-left mb-1">Select Upload Integration</label>
-                    <div class="flex items-center space-x-2">
-                        <div class="relative flex-grow">
-                            <div
-                                class="w-full pl-3 pr-10 py-2 text-left bg-white border border-gray-300 rounded-sm shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                <span id="upload-integration-text" class="block truncate">Upload File</span>
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400 h-5 w-5"></i>
-                                </span>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="flex-1 overflow-y-auto bg-white">
+                    <div class="flex h-full">
+                        <!-- Fields Configuration Panel -->
+                        <div class="flex-1 p-6">
+                            <!-- Fields Header with Action Links -->
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-lg font-semibold text-gray-900">Fields</h2>
+                                <div class="flex items-center space-x-4">
+                                    <a href="#"
+                                        class="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-plus text-xs"></i>
+                                        <span>ADD NEW FIELD</span>
+                                    </a>
+                                    <a href="#"
+                                        class="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-list text-xs"></i>
+                                        <span>ADD CHOICE LIST</span>
+                                    </a>
+                                </div>
                             </div>
-                            <select id="upload-integration-select" name="upload-integration"
-                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                <option>Upload File</option>
-                                <option>Batch Upload Files</option>
-                            </select>
-                        </div>
-                        <button type="button" class="p-2 text-indigo-600 hover:text-indigo-800">
-                            <i class="fas fa-plus fa-lg"></i>
-                        </button>
-                    </div>
-                </div>
-                <!-- Custom Picker for Download Integration -->
-                <div>
-                    <label for="download-integration-select"
-                        class="text-sm font-medium text-gray-700 block text-left mb-1">Select Download
-                        Integration</label>
-                    <div class="flex items-center space-x-2">
-                        <div class="relative flex-grow">
-                            <div
-                                class="w-full pl-3 pr-10 py-2 text-left bg-white border border-gray-300 rounded-sm shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                <span id="download-integration-text" class="block truncate">Download File</span>
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400 h-5 w-5"></i>
-                                </span>
+
+                            <!-- Fields Table -->
+                            <div class="bg-white border border-gray-200 rounded">
+                                <!-- Table Header -->
+                                <div
+                                    class="grid grid-cols-10 gap-6 px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="col-span-1"></div>
+                                    <div class="col-span-4">Field Name</div>
+                                    <div class="col-span-3">Field Type</div>
+                                    <div class="col-span-2">Actions</div>
+                                </div>
+
+                                <!-- Field Rows -->
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="id"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>Number (Integer)</option>
+                                            <option>Text</option>
+                                            <option>Date and Time</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        <i class="fas fa-key text-yellow-500 text-sm" title="Primary Key"></i>
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="createdBy"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>User</option>
+                                            <option>Text</option>
+                                            <option>Number (Integer)</option>
+                                            <option>Date and Time</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Document Type Row 1 -->
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="invoice"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>Document</option>
+                                            <option>Text</option>
+                                            <option>Number (Integer)</option>
+                                            <option>Date and Time</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Document Type Row 2 -->
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="contract"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>Document</option>
+                                            <option>Text</option>
+                                            <option>Number (Integer)</option>
+                                            <option>Date and Time</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Document Type Selection Row -->
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="order"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>Number (Integer)</option>
+                                            <option>Text</option>
+                                            <option>Choice List</option>
+                                            <option>Document</option>
+                                            <option>Date and Time</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                       
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="createdOn"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>Date and Time</option>
+                                            <option>Text</option>
+                                            <option>Number (Integer)</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="modifiedBy"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>User</option>
+                                            <option>Text</option>
+                                            <option>Number (Integer)</option>
+                                            <option>Date and Time</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" value="modifiedOn"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>Date and Time</option>
+                                            <option>Text</option>
+                                            <option>Number (Integer)</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+                                <div class="field-row grid grid-cols-10 gap-6 px-4 py-4 items-center">
+                                    <div class="col-span-1">
+                                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                                    </div>
+                                    <div class="col-span-4">
+                                        <input type="text" placeholder="Field name"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <select
+                                            class="field-type-select w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            <option>Text</option>
+                                            <option>Number (Integer)</option>
+                                            <option>Date and Time</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-span-2 flex items-center space-x-3">
+                                        <i class="fas fa-info-circle action-icon text-blue-500 text-sm"
+                                            title="Info"></i>
+                                        <i class="fas fa-arrow-up action-icon text-gray-400 text-sm"
+                                            title="Move Up"></i>
+                                        <i class="fas fa-arrow-down action-icon text-gray-400 text-sm"
+                                            title="Move Down"></i>
+                                        <i class="fas fa-times delete-icon action-icon text-gray-400 text-sm"
+                                            title="Delete"></i>
+                                    </div>
+                                </div>
+
+
                             </div>
-                            <select id="download-integration-select" name="download-integration"
-                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                <option>Download File</option>
-                                <option>Get All Files</option>
-                            </select>
+
+
                         </div>
-                        <button type="button" class="p-2 text-indigo-600 hover:text-indigo-800">
-                            <i class="fas fa-plus fa-lg"></i>
-                        </button>
+
+                        <!-- Right Sidebar -->
+                        <div class="w-80 bg-gray-50 border-l border-gray-200 p-6 overflow-y-auto">
+                            <!-- Commonly Used Fields -->
+                            <div class="mb-8">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-4">Commonly Used Fields</h3>
+                                <div class="space-y-2">
+                                    <div
+                                        class="commonly-used-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                            <span class="text-sm font-medium">name</span>
+                                        </div>
+                                        <i class="fas fa-plus text-gray-400 text-xs"></i>
+                                    </div>
+                                    <div
+                                        class="commonly-used-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-align-left text-gray-400"></i>
+                                            <span class="text-sm font-medium">description</span>
+                                        </div>
+                                        <i class="fas fa-plus text-gray-400 text-xs"></i>
+                                    </div>
+                                    <div
+                                        class="commonly-used-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-calendar text-gray-400"></i>
+                                            <span class="text-sm font-medium">startDate</span>
+                                        </div>
+                                        <i class="fas fa-plus text-gray-400 text-xs"></i>
+                                    </div>
+                                    <div
+                                        class="commonly-used-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-calendar text-gray-400"></i>
+                                            <span class="text-sm font-medium">endDate</span>
+                                        </div>
+                                        <i class="fas fa-plus text-gray-400 text-xs"></i>
+                                    </div>
+                                    <div
+                                        class="commonly-used-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-toggle-on text-gray-400"></i>
+                                            <span class="text-sm font-medium">isActive</span>
+                                        </div>
+                                        <i class="fas fa-plus text-gray-400 text-xs"></i>
+                                    </div>
+                                    <div
+                                        class="commonly-used-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-user-tag text-gray-400"></i>
+                                            <span class="text-sm font-medium">assignee</span>
+                                        </div>
+                                        <i class="fas fa-plus text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Choice List Fields -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900 mb-4">Choice List Fields</h3>
+                                <div class="space-y-2">
+                                    <div
+                                        class="choice-list-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-cog text-gray-400"></i>
+                                            <span class="text-sm font-medium">status</span>
+                                        </div>
+                                        <i class="fas fa-link text-gray-400 text-xs"></i>
+                                    </div>
+                                    <div
+                                        class="choice-list-field flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-exclamation-triangle text-gray-400"></i>
+                                            <span class="text-sm font-medium">priority</span>
+                                        </div>
+                                        <i class="fas fa-link text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Document Generation Section -->
+                            <div class="mt-8 p-4 bg-white border border-gray-200 rounded">
+                                <div class="text-center">
+                                    <div class="mb-4">
+                                        <i class="fas fa-file-alt text-4xl text-blue-500"></i>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-2">Do you have documents related
+                                        to Orders?</h4>
+                                    <p class="text-xs text-gray-600 mb-4">
+                                        Generate a related record type to manage those documents.
+                                    </p>
+                                    <button
+                                        class="w-full px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100">
+                                        GENERATE RECORD TYPE
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </form>
-            <div class="items-center px-4 py-3 mt-8 text-center">
-                <button id="submit-modal-btn"
-                    class="px-6 py-2 bg-indigo-600 text-white text-base font-medium rounded-sm w-full shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                    Submit
+                </main>
+            </div>
+
+            <!-- Modal Footer with Action Buttons -->
+            <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-white">
+                <button
+                    class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50">
+                    GO BACK
                 </button>
+                <div class="flex space-x-3">
+                    <button
+                        class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50">
+                        CANCEL
+                    </button>
+                    <button class="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700">
+                        NEXT
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Create Data Model Modal -->
-    <div id="create-data-model-modal" class="modal">
-        <div class="relative mx-auto border w-full max-w-6xl shadow-lg rounded-sm bg-white" style="height: 90vh;">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-900">Create Data Model</h2>
-                <button id="data-model-modal-close" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times fa-lg"></i>
-                </button>
-            </div>
-
+    <!-- Document Configuration Modal -->
+    <div id="documentConfigModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; height: auto; padding: 32px; border-radius: 8px;">
             <!-- Modal Content -->
-            <div class="flex h-full">
-                <!-- Left Panel - Instructions -->
-                <div class="w-1/4 bg-blue-900 text-white p-6">
-                    <h3 class="text-lg font-semibold mb-4">What fields do you need?</h3>
-                    <p class="text-sm mb-4">Create fields to store the data about your record. Find the field type that
-                        best fits your data.</p>
-                    <p class="text-xs text-blue-200">Etc.</p>
-                </div>
+            <div class="bg-white">
+                <!-- Header Text -->
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Will This Record Type only Store Documents?</h2>
 
-                <!-- Center Panel - Fields Configuration -->
-                <div class="flex-1 p-6">
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Fields</h3>
-                        <div class="flex items-center space-x-4 mb-4">
-                            <button class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-                                ADD NEW FIELD
-                            </button>
-                            <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded hover:bg-gray-200">
-                                ADD CHOICE LIST
-                            </button>
+                <!-- Blue Banner -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-500 text-lg"></i>
                         </div>
-                    </div>
-
-                    <!-- Fields List -->
-                    <div class="space-y-4">
-                        <!-- Field 1 - id -->
-                        <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-600 font-semibold text-sm">1</span>
-                            </div>
-                            <div class="flex-1">
-                                <input type="text" value="id" class="w-full p-2 border border-gray-300 rounded text-sm">
-                            </div>
-                            <div class="w-40">
-                                <select class="w-full p-2 border border-gray-300 rounded text-sm">
-                                    <option>Number (Integer)</option>
-                                    <option>Text</option>
-                                    <option>Date and Time</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Field 2 - createdBy -->
-                        <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-600 font-semibold text-sm">2</span>
-                            </div>
-                            <div class="flex-1">
-                                <input type="text" value="createdBy"
-                                    class="w-full p-2 border border-gray-300 rounded text-sm">
-                            </div>
-                            <div class="w-40">
-                                <select class="w-full p-2 border border-gray-300 rounded text-sm">
-                                    <option>User</option>
-                                    <option>Text</option>
-                                    <option>Number (Integer)</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Field 3 - createdOn -->
-                        <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-600 font-semibold text-sm">3</span>
-                            </div>
-                            <div class="flex-1">
-                                <input type="text" value="createdOn"
-                                    class="w-full p-2 border border-gray-300 rounded text-sm">
-                            </div>
-                            <div class="w-40">
-                                <select class="w-full p-2 border border-gray-300 rounded text-sm">
-                                    <option>Date and Time</option>
-                                    <option>Text</option>
-                                    <option>User</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Field 4 - modifiedBy -->
-                        <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-600 font-semibold text-sm">4</span>
-                            </div>
-                            <div class="flex-1">
-                                <input type="text" value="modifiedBy"
-                                    class="w-full p-2 border border-gray-300 rounded text-sm">
-                            </div>
-                            <div class="w-40">
-                                <select class="w-full p-2 border border-gray-300 rounded text-sm">
-                                    <option>User</option>
-                                    <option>Text</option>
-                                    <option>Date and Time</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Field 5 - modifiedOn -->
-                        <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-600 font-semibold text-sm">5</span>
-                            </div>
-                            <div class="flex-1">
-                                <input type="text" value="modifiedOn"
-                                    class="w-full p-2 border border-gray-300 rounded text-sm">
-                            </div>
-                            <div class="w-40">
-                                <select class="w-full p-2 border border-gray-300 rounded text-sm">
-                                    <option>Date and Time</option>
-                                    <option>Text</option>
-                                    <option>User</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Field 6 - Empty field -->
-                        <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-600 font-semibold text-sm">6</span>
-                            </div>
-                            <div class="flex-1">
-                                <input type="text" placeholder="Field name"
-                                    class="w-full p-2 border border-gray-300 rounded text-sm">
-                            </div>
-                            <div class="w-40">
-                                <select class="w-full p-2 border border-gray-300 rounded text-sm">
-                                    <option>Text</option>
-                                    <option>Number (Integer)</option>
-                                    <option>Date and Time</option>
-                                    <option>User</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-800">When there are 3 or more document field types we recommend
+                                creating a related document record type</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Panel - Commonly Used Fields -->
-                <div class="w-1/4 bg-gray-50 p-6 border-l border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Commonly Used Fields</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-2 text-sm">
-                            <i class="fas fa-user text-gray-400"></i>
-                            <span>name</span>
+                <!-- Yes Option -->
+                <div class="space-y-4 mb-8">
+                    <label class="flex items-start p-4 border-2 border-blue-500 bg-blue-50 rounded-lg cursor-pointer">
+                        <input type="radio" name="documentChoice" value="yes" class="mt-1 mr-4 text-blue-600" checked>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-lg">Yes</div>
+                            <div class="text-gray-600 text-sm">Generate a related record type to store documents</div>
                         </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <i class="fas fa-align-left text-gray-400"></i>
-                            <span>description</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <i class="fas fa-calendar text-gray-400"></i>
-                            <span>startDate</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <i class="fas fa-calendar text-gray-400"></i>
-                            <span>endDate</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <i class="fas fa-toggle-on text-gray-400"></i>
-                            <span>isActive</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <i class="fas fa-user text-gray-400"></i>
-                            <span>assignee</span>
-                        </div>
-                    </div>
+                    </label>
 
-                    <div class="mt-8">
-                        <h4 class="text-sm font-semibold text-gray-900 mb-3">Choice List Fields</h4>
-                        <div class="space-y-2">
-                            <div class="flex items-center space-x-2 text-sm">
-                                <i class="fas fa-list text-gray-400"></i>
-                                <span>status</span>
-                            </div>
-                            <div class="flex items-center space-x-2 text-sm">
-                                <i class="fas fa-list text-gray-400"></i>
-                                <span>priority</span>
-                            </div>
+                    <!-- No Option -->
+                    <label
+                        class="flex items-start p-4 border-2 border-gray-200 bg-white rounded-lg cursor-pointer hover:border-gray-300">
+                        <input type="radio" name="documentChoice" value="no" class="mt-1 mr-4 text-blue-600">
+                        <div>
+                            <div class="font-semibold text-gray-900 text-lg">No</div>
+                            <div class="text-gray-600 text-sm">Documents associated to these records will be mapped in
+                                this record type itself</div>
                         </div>
-                    </div>
-
-                    <!-- Documents Section -->
-                    <div class="mt-8 p-4 bg-white rounded border border-gray-200">
-                        <div class="text-center">
-                            <div class="mb-3">
-                                <i class="fas fa-file-alt text-4xl text-blue-600"></i>
-                            </div>
-                            <h4 class="text-sm font-semibold text-gray-900 mb-2">Do you have documents related to
-                                Orders?</h4>
-                            <p class="text-xs text-gray-600 mb-4">Generate a detailed record type to manage those
-                                documents.</p>
-                            <button class="px-4 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
-                                GENERATE RECORD TYPE
-                            </button>
-                        </div>
-                    </div>
+                    </label>
                 </div>
-            </div>
 
-            <!-- Modal Footer -->
-            <div class="flex items-center justify-between p-6 border-t border-gray-200">
-                <button id="data-model-go-back" class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
-                    GO BACK
-                </button>
-                <button id="data-model-next" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    NEXT
-                </button>
+                <!-- Footer Buttons -->
+                <div class="flex items-center justify-between">
+                    <button id="documentConfigCancel"
+                        class="px-6 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-600 rounded hover:bg-blue-50">
+                        CANCEL
+                    </button>
+                    <button id="documentConfigSave"
+                        class="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700">
+                        DONE
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    // Page navigation elements
-    const dataModelNav = document.getElementById('data-model-nav');
-    const eventsNav = document.getElementById('events-nav');
-    const documentsNav = document.getElementById('documents-nav');
-    const dataModelPage = document.getElementById('data-model-page');
-    const eventsPage = document.getElementById('events-page');
-    const documentsPage = document.getElementById('documents-page');
-    const configurationsPage = document.getElementById('configurations-page');
-    const editConfigBtn = document.getElementById('edit-config-btn');
+        // Simple test function - available globally
+        function showDocModal() {
+            console.log('showDocModal called');
+            const docModal = document.getElementById('documentConfigModal');
+            if (docModal) {
+                docModal.style.display = 'flex';
+                docModal.style.zIndex = '9999';
+                console.log('Document modal should be visible');
+            } else {
+                console.log('Document modal not found');
+            }
+        }
 
-    // Config page tab elements
-    const listTab = document.getElementById('list-tab');
-    const configTab = document.getElementById('config-tab');
-    const listTabContent = document.getElementById('list-tab-content');
-    const configTabContent = document.getElementById('config-tab-content');
+        function hideDocModal() {
+            const docModal = document.getElementById('documentConfigModal');
+            if (docModal) {
+                docModal.style.display = 'none';
+            }
+        }
 
+        // Main modal functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM loaded');
 
+            // Main modal controls
+            const modal = document.getElementById('createDataModelModal');
+            const openBtn = document.getElementById('openModalBtn');
+            const closeBtn = document.getElementById('closeModalBtn');
 
-    function showDataModel() {
-    dataModelNav.classList.add('active');
-    eventsNav.classList.remove('active');
-    documentsNav.classList.remove('active');
+            if (openBtn) {
+                openBtn.addEventListener('click', function () {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
 
-    dataModelPage.classList.add('active');
-    eventsPage.classList.remove('active');
-    documentsPage.classList.remove('active');
-    configurationsPage.classList.remove('active');
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
 
-    // Open the Create Data Model modal when navigating to Data Model
-    openDataModelModal();
-    }
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeModal);
+            }
 
-    function showEvents() {
-    eventsNav.classList.add('active');
-    dataModelNav.classList.remove('active');
-    documentsNav.classList.remove('active');
+            // Document modal controls
+            const docCloseBtn = document.getElementById('documentConfigCloseBtn');
+            const docCancelBtn = document.getElementById('documentConfigCancel');
+            const docSaveBtn = document.getElementById('documentConfigSave');
 
-    eventsPage.classList.add('active');
-    dataModelPage.classList.remove('active');
-    documentsPage.classList.remove('active');
-    configurationsPage.classList.remove('active');
-    }
+            if (docCloseBtn) {
+                docCloseBtn.addEventListener('click', hideDocModal);
+            }
+            if (docCancelBtn) {
+                docCancelBtn.addEventListener('click', hideDocModal);
+            }
+            if (docSaveBtn) {
+                docSaveBtn.addEventListener('click', hideDocModal);
+            }
 
-    function showDocuments() {
-    documentsNav.classList.add('active');
-    dataModelNav.classList.remove('active');
-    eventsNav.classList.remove('active');
+            // Field type change detection
+            document.addEventListener('change', function (e) {
+                if (e.target.tagName === 'SELECT' && e.target.classList.contains('field-type-select')) {
+                    console.log('Field type changed to:', e.target.value);
+                    if (e.target.value === 'Document' || e.target.value === 'Document Type') {
+                        showDocModal();
+                    }
+                }
 
-    documentsPage.classList.add('active');
-    dataModelPage.classList.remove('active');
-    eventsPage.classList.remove('active');
-    configurationsPage.classList.remove('active');
-    }
+                // Handle radio button selection in document modal
+                if (e.target.name === 'documentChoice') {
+                    const labels = document.querySelectorAll('label');
+                    const saveButton = document.getElementById('documentConfigSave');
 
-    function showConfigurations() {
-    documentsNav.classList.add('active');
-    dataModelNav.classList.remove('active');
-    eventsNav.classList.remove('active');
-    dataModelPage.classList.remove('active');
-    documentsPage.classList.remove('active');
-    configurationsPage.classList.add('active');
-    // Default to list tab
-    showListTab();
-    }
+                    labels.forEach(label => {
+                        const radio = label.querySelector('input[name="documentChoice"]');
+                        if (radio) {
+                            if (radio.checked) {
+                                label.classList.remove('border-gray-200', 'bg-white');
+                                label.classList.add('border-blue-500', 'bg-blue-50');
 
-    function showListTab() {
-    listTab.classList.add('active');
-    configTab.classList.remove('active');
-    listTabContent.classList.add('active');
-    configTabContent.classList.remove('active');
-    }
-
-    function showConfigTab() {
-    configTab.classList.add('active');
-    listTab.classList.remove('active');
-    configTabContent.classList.add('active');
-    listTabContent.classList.remove('active');
-    }
-
-    dataModelNav.addEventListener('click', showDataModel);
-    eventsNav.addEventListener('click', showEvents);
-    documentsNav.addEventListener('click', showDocuments);
-    listTab.addEventListener('click', showListTab);
-    configTab.addEventListener('click', showConfigTab);
-
-    // Set initial page view
-    showDocuments();
-
-    // View toggle functionality
-    const listViewBtn = document.querySelector('button[title="List View"]');
-    const gridViewBtn = document.querySelector('button[title="Grid View"]');
-    const listView = document.getElementById('list-view');
-    const gridView = document.getElementById('grid-view');
-
-    function showListView() {
-    // Update button states
-    listViewBtn.className = "p-2 text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors";
-    gridViewBtn.className = "p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors";
-
-    // Show/hide views
-    listView.classList.remove('hidden');
-    gridView.classList.add('hidden');
-
-    // Hide filter section in list view
-    document.getElementById('filter-section').classList.add('hidden');
-
-    // Hide configurations page when in list view
-    configurationsPage.classList.remove('active');
-    }
-
-    function showGridView() {
-    // Update button states
-    gridViewBtn.className = "p-2 text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors";
-    listViewBtn.className = "p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors";
-
-    // Show/hide views
-    listView.classList.add('hidden');
-    gridView.classList.remove('hidden');
-
-    // Show filter section in grid view
-    document.getElementById('filter-section').classList.remove('hidden');
-
-    // Show configurations page when in grid view
-    configurationsPage.classList.add('active');
-    }
-
-    listViewBtn.addEventListener('click', showListView);
-    gridViewBtn.addEventListener('click', showGridView);
-
-    // Modal handling
-    const connectExternalBtn = document.getElementById('connect-external-btn');
-    const externalSystemModal = document.getElementById('external-system-modal');
-    const submitModalBtn = document.getElementById('submit-modal-btn');
-    const modalCloseIcon = document.getElementById('modal-close-icon');
-
-    function openModal() {
-    externalSystemModal.classList.add('active');
-    }
-
-    function closeModal() {
-    externalSystemModal.classList.remove('active');
-    }
-
-    connectExternalBtn.addEventListener('click', openModal);
-    editConfigBtn.addEventListener('click', openModal);
-    modalCloseIcon.addEventListener('click', closeModal);
-
-    submitModalBtn.addEventListener('click', () => {
-    // Get values from modal
-    const connectedSystem = document.getElementById('connected-system-select').value;
-    const uploadIntegration = document.getElementById('upload-integration-select').value;
-    const downloadIntegration = document.getElementById('download-integration-select').value;
-
-    // Populate configuration card
-    document.getElementById('config-system').textContent = connectedSystem;
-    document.getElementById('config-upload').textContent = uploadIntegration;
-    document.getElementById('config-download').textContent = downloadIntegration;
-
-    closeModal();
-    showConfigurations();
-    });
-
-    // Close modal if user clicks on the background overlay
-    externalSystemModal.addEventListener('click', (event) => {
-    if (event.target === externalSystemModal) {
-    closeModal();
-    }
-    });
-
-    // Picker field logic
-    const connectedSystemSelect = document.getElementById('connected-system-select');
-    const connectedSystemText = document.getElementById('connected-system-text');
-    const uploadIntegrationSelect = document.getElementById('upload-integration-select');
-    const uploadIntegrationText = document.getElementById('upload-integration-text');
-    const downloadIntegrationSelect = document.getElementById('download-integration-select');
-    const downloadIntegrationText = document.getElementById('download-integration-text');
-
-    connectedSystemSelect.addEventListener('change', (e) => {
-    connectedSystemText.textContent = e.target.value;
-    });
-
-    uploadIntegrationSelect.addEventListener('change', (e) => {
-    uploadIntegrationText.textContent = e.target.value;
-    });
-
-    downloadIntegrationSelect.addEventListener('change', (e) => {
-    downloadIntegrationText.textContent = e.target.value;
-    });
-
-
-
-    // Data Model Modal handling
-    const createDataModelModal = document.getElementById('create-data-model-modal');
-    const dataModelModalClose = document.getElementById('data-model-modal-close');
-    const dataModelGoBack = document.getElementById('data-model-go-back');
-    const dataModelNext = document.getElementById('data-model-next');
-
-    function openDataModelModal() {
-    createDataModelModal.classList.add('active');
-    }
-
-    function closeDataModelModal() {
-    createDataModelModal.classList.remove('active');
-    }
-
-    dataModelModalClose.addEventListener('click', closeDataModelModal);
-    dataModelGoBack.addEventListener('click', closeDataModelModal);
-    dataModelNext.addEventListener('click', closeDataModelModal);
-
-    // Close modal if user clicks on the background overlay
-    createDataModelModal.addEventListener('click', (event) => {
-    if (event.target === createDataModelModal) {
-    closeDataModelModal();
-    }
-    });
-
-    });
+                                // Update button text based on selection
+                                if (saveButton) {
+                                    if (radio.value === 'yes') {
+                                        saveButton.textContent = 'NEXT';
+                                    } else {
+                                        saveButton.textContent = 'DONE';
+                                    }
+                                }
+                            } else {
+                                label.classList.remove('border-blue-500', 'bg-blue-50');
+                                label.classList.add('border-gray-200', 'bg-white');
+                            }
+                        }
+                    });
+                }
+            });
+        });
     </script>
 </body>
 
